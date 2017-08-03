@@ -1,0 +1,17 @@
+CHROMACODING_VALUES=true
+IDLDT_IDLDOC_FILE_TEMPLATE=;+\n; \:Author\: ${user}\n;-
+IDLDT_IDLDOC_ROUTINE_TEMPLATE=;+\n; \:Description\:\n;    Describe the procedure.\n;\n; ${parameters}\n;\n; ${keywords}\n;\n; \:Author\: ${user}\n;-
+IDLDT_VALUES=true
+IDL_CPU_VECTOR_ENABLE=1
+IDL_DEVICE=X
+IDL_GR_X_RENDERER=1
+IDL_PATH=<IDL_DEFAULT>\:+/u1/uaf/jzhu4/projects/nps/bin
+IDL_PATH_CACHE_DISABLE=0
+IDL_QUIET=0
+IDL_STARTUP=/u1/uaf/jzhu4/projects/nps/startup_nps.pro
+IDL_VALUES=true
+MACROS_FLOATING_TOOLBAR_HEIGHT=32
+MACROS_FLOATING_TOOLBAR_WIDTH=32
+MACROS_FLOATING_TOOLBAR_X=0
+coolItemsOrder=org.eclipse.ui.workbench.file\:com.rsi.idldt.ui.textedit.toolbar\:com.rsi.idldt.ui.toolbar.debugTools
+eclipse.preferences.version=1

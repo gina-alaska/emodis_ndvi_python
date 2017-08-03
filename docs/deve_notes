@@ -1,0 +1,164 @@
+2012/6/7, jz
+   found modified ver17 can not produce the same result as ver17-old, checked and found getsos_ver17.pro and geteos_ver17.pro are different with getsos_ver17_old.pro and geteos_ver17_old.pro, modified the getsos_ver17.pro and geteos_ver17.pro. make sure the logic is the same as ver17-old, for sos: first threshold index, if have crossover, set the absolutely closest crossover as possibx, pick the larger index between threshold index and possiblex as sos, do not make sure sos is not snow day.
+
+2012/6/11, jz
+
+ver16: is the version approved by Mike Budde. Ver16 does first threshold, most close crossover point, later day between possibx and threshold, make sure SOS, EOSare not "snow". Moving window is [35,35].
+
+Ver17: is modified version from ver16, same as ver16 except that ver17 do not make sure SOSEOS are not "snow".
+
+compare ver16 with ver17. Ver16 has smaller eos-sos range. It means "not snow" condition affects the result.
+
+copy ver16m1 from ver16.
+
+ver16m1: modify from ver16, try use wl=auto_wl in version 16. call it ver16m1, re-run to check it it is better. ver16m1 does not work propertly. Because the wl_auto.pro does not work well.
+
+2012/6/16, jz
+
+copy coedes in ver16m1 to codes and codes_ver16_auto_loose
+
+~/modis_ndvi_250m/codes, 
+
+In ~/modis_ndvi_metrics/codes_ver16_auto_loose,
+
+modify the user_metrics_nps_by1yr.pro, loose the condition for enp-onp.
+
+modify wl_auto_ver16.pro from wl_auto.pro: estimate up 20% point and down 20% point, produce window length.
+
+modify getcrossove_percentage_extremeslope_ver16.pro: if can not find threshold point, use estimated threshold.
+
+modify getsos_ver16.pro and geteos_ver16.pro: uses consecutive three "not snow" points to determine the SOS and EOS point.
+
+wl_auto_ver16.pro still have problem. 
+
+
+
+2012/6/17: working on "ver16m2", "ver16m3" and "ver16m4"
+
+copy codes_ver16_auto_loose to codes_ver16m2, codes_ver16m3, and codes_ver16m4. 
+
+In ~/modis_ndvi_metrics/codes_ver16m2:
+
+wl_auto_ver16m2.pro, uses 20% of maximum point as the line to determine the 20% threshold points. When minimum > 20% of maximum, use minimum as 20% threshold.gap=sos 20% threshold - eos 20% threshold. getcrossover_percentage_extremeslop_ver16.pro, for sos period, check left_minimun to mxidxst, for eos period, use mxidxed to right_minimum.
+
+In ~/modis_ndvi_ver16m3/codes_ver16m3:
+
+wl_auto_ver16.pro, uses 20% of (maximun-leftside minimum) as sos 20% threshold, use 20% of (maximum-rightside minimum) as eos 20% threshold.Others are the same as ver16m2.
+
+In ~/modis_ndvi_ver16m4/codes_ver16m4:
+
+user_metrics_by1yr.pro, use wl=[num of time series - 17,num of time series -17,num of time series -17]. Others are the same as ver16m2.
+
+They still do not works. The reason is the wl_auto_ver16.pro does not work well.
+
+2012/6/18, jz
+
+modify wl_auto_ver16.pro (in ver16m3,ver16m4) and wl_auto_ver16m2.pro (in ver16m2). calcualte maximum from ndvi(4:num-4). Because I found there are some time series with maximum at the last point. As a result,the mxidxst and mxidxed become the last point index,which causes that it can not correctly calculate the sos day.  
+
+modify wl_auto_ver16.pro in ver16m2, add condition to limit the wl in the range 5 to 27. Don't add this condition in ver16m3 and ver16m4.
+
+2012/6/19, jz
+
+programs stop with errors. modify auto_wl_ver16.pro and auto_wl_ver16m2.pro, make sure the mxidxst and mxidxed are in the range of cutof to num-cutoff, cutoff=4. and make sure possibx is in the range from idx_minimum to mxidxst, so that possibx and x20 are alway in the good range. 
+modify getsos_ver16.pro by adding condition that possibx + 2 lt num-1, otherwise, sosx=0
+modify geteos_ver16.pro by adding condition taht possibx -2  gt 0, otherwise,oesx=0
+
+ver16m3, ver16m2, and ver16m4, all assume that 20% sos threshold point is in the range of [leftside_mini to mxidxst], and 20% eos threshold ponit is in [mxidxed:rightside_min]. When doing search corssover points and threshold points, also search crossover and threshold points in these range.This is very strong limit condition, perhaps need do search from [0:mxidxst] and [mxidxed:num-1].
+ 
+2012/6/20,jzhu
+
+ver16m3 and ver16m4 stop. Ver16m2 works. compare ver16m2 with ver16. onp are smaller in ver16m2 than ver16. This is predictable. Because in ver16, we use very wide window width (wl=[35,35]), it makes many soscrossover points greater than sos 20% threshold. I would rather think ver16m2 is more accurate than ver16.
+
+The reason that ver16m3 and ver16m4 did not work is that auto_wl_ver16.pro did not work. When left-side minimum is equal or greater than maximun value, the program can not find the sos 20% threshold. 
+modify the auto_wl_ver16.pro in the ver16m3 and ver16m4, mx = max(ndvi(10,num-4)); if left_side minimum  is equal or greater than mx, can not find sos 20% threshold, then set idx_sosv20=0, and set wl=[-1,-1]. in user_metrics_nps_by1yr.pro, if wl=[-1,-1], then do not calculate metrics, directly return.  
+
+2012/6/21,jzhu
+
+ver16m4 works. compare ver16m4 with ver16. the onp result from ver16m4 has smaller (about 7 days) than ver16. It also predictable. ver16 uses [35,35], and ver16m4 uses [25,25].I think wl=[35,35] in ver16 is too strick. This is way I want to try dynamically determine the wl.
+
+start to develope ver16m5. ver16m5 has following features. use auto_wl_ver16m5.pro: if have 20% sos and 20% eos point, use it to estimate the wl, 0.2*mx <min <mx. uses min as 20% threshold, min >= mx, wl=[-1,-1]. getcrossover_percentage_extremeslope_ver16m5.pro: get rid of add 20% sos and 20% eos threshold. getsos_ver16m5.pro and geteos_ver16m5.pro: x20 maybe 0, possiblx maybe 0, x20>0 and possibx >0, x20=0 and possibx=0, mflg=0
+
+ver16m5: do not add threshold points in the cross if they can not be found in the time series in the getcrossover_percentage_extremeslope_ver16m5.pro; In getsos_ver16m5.pro and geteos_ver16m5.pro, add no x20 condition. auto_idxv20_ver16m5.pro uses 0.2*mx, if 0.2*mx <min <mx, uses min as threshold, if min >=mx, wl=[-1,-1], do not calculate the metrics. getsos_ver16m5.pro uses ne 4b, geteos_ver16m5.pro uses EQ 0b.
+
+
+ver16m2: modify ver16m2 from previous version. In auto_indxv20_ver16m2.pro, min<0.2*mx, auto calculate wl, otherwise, uses wl=[num-17,num-17]. getcrossover_percentage_extremeslope_ver16m2.pro do not add threshods. getsos_ver16m2.pro uses NE 4b, geteos_ver16m2.pro uses EQ 0b.
+
+ver16m3: found ver16m3 is better than ver16m2. work on ver16m3. uses ENVI to compare metrics with z-profile of smooth data,found some good data does not show good metrics. check program, found geteos_ver16m3.pro uses "3 point EQ good",which is too strick, change into "3 points NE snow" in geosos_ver16m3.pro and geteos_ver16m3.pro
+
+run ver16m3 again at packman6:1 (2012/6/21:23:45)
+
+2012/6/22, jzhu
+
+conclusions:
+1, add threshold method better.(in getcross_percentage_extremeslope_ver16m2.pro)
+
+2. when min<0.2*mx, auto wl, others, wl=[num-17,num-17] works better than min<0.2*mx, 0.2*mx<min<mx, min>=mx.
+
+3.getsos_ver16m2.pro and geteos_ver16m2.pro do not have x20=0, sos and eos NE 4b.
+
+4.narrow the mx calcualtion range from [5,num-5] to mx=[15,num-10]
+
+modify ver16m2_2, by using above 4 definitions. run to produce ver16m2_3 on pacman7:1.
+
+found first ver16m2 is good, recover it and names it as ver16m2_1. it use min<0.2*mx, otherwise, use min as threshold, calcualte wl, and promise wl in the range of [15,35]. no add threshold in getcross_percentage_extremeslope_ver16m2_1.pro. getsos_ver16m2_1.pro and geteos_ver16m2_1.pro , if no thresholds, set sos or eos as 0. 
+run ver16m2_1 on pacman5:1.
+
+
+2012/6/24,jzhu
+
+final decision: ver16m2_1 and ver16m2_3 are two final candidates. THe difference is:
+
+ver16m2_1
+min<0.2*mx, use auto wl
+min>=0.2*mx, wl=[n-17,n-17], and idx_sosv20=0,idx_eosv20=n-1
+do not add thresholds in getcrossover_percentage_extremeslope.pro
+getsos_ver16m2_1.pro and geteos_ver16m2_1.pro, if no thrshold, do not calculate metrics.
+
+*ver16 (aprovaled version) is the same as ver16m2_1 except that ver16 uses fix wl=[35,35]. compare ver16m2_1 with ver16, ver16m2_1 onp are verage earlier 7 days.
+
+ver16m2_3
+min<0.2*mx, use auto wl
+min >=0.2*mx, use wl=[n-17,n-17], and idx_sosv20=0 and idx_eosv20=n-1
+add thresholds if can not find the thresholds in getcrossover_percentage_extremeslope.pro
+getsos_ver16m2_3.pro and geteos_vewr16m2_3.pro, if no threshold,do not calulate metrics. Because you add thresholds. It guarrantee that thresholds exist. so it always calculate metrics even if the min of the time series is greater than 0.2*mx. As a result, ver16m2_3 can produces more valid pixels in metrics data file. 
+
+*ver16m2_1 and ver16m2_3 have the same result if min <0.2*mx, if min >= 0.2*mx, ver16m2_1 does not have metrics, but ver16m2_3 has metrics result. The onp in the ver13m2_3 are average 7 days earlier than in the ver16.
+
+I will provide ver16m2_3 to Mike to review.
+
+2012/7/3,jzhu
+
+talked to Mike on 2012/7/3. He think ver16 is better than ver16m2_3. He stressed that consistence is important. If using dynamically windows width, it will import a lot of un consistence, which is not good to comparrision.
+He sugested trying a different smoothing window. original using [1,1],which is 3 points, now try [2,2], which is 5 point smooth.
+
+ver16m1_1: 30 ponits window-width, 3 ponits smooth
+
+ver16m1_2: 30 points window-width, 5 points smmoth
+
+ver16m1_1 and ver16m1_2 are almost same, perhaps 5 points is better.
+
+2012/7/9, jzhu
+
+ver16m1_3: 30 points window-width, 5 points smooth, calculate metrics even min is greater than 20% max. if min is greater than 20% max, sos_thrs=0, eos_thrs=num-1, then check if have crossover, if do not have crossover, do not calculate metrics, never consider 0 or num-1 as SOS or EOS. only consider one odd point replacement.
+
+compare ver16m1_1,ver16m1_2,and ver16m1_3, ver16m1_1 is thae same with ver16 (approved version), ver16m1_2 uses 5 point smooth, ver16m1_3 uses 5 point smooth and calculate min > 20%max. Ver16m1_1 and ver16m1_2 are almost same, ver16m1_3 have more valid metrics pixels, and other pixels are the same as ver16m1_2.
+
+2012/7/9
+give ver16m1_1 and ver16m1_3 to Mike to review.
+
+2012/7/19
+
+Mike thinks ver16m1_3 is the best. copy ver16m1_3 into modis_ndvi_metrics, smooth, before 2 points, after 2 points. no extension to 52 bands.
+
+start to process 2003-2011 data 
+
+
+2013/8/8
+
+copy modis_ndvi_metrics to modis_ndvi_metrics_v2.0
+
+modify findday.pro to consider if fix(dayidx) = 0.
+
+reprocess 2005 modis ndvi data, see if there are any change between v2.0 and old version (v1.0). It fixes the problem in modis_ndvi_metrics_v1.0. The results is the same. So We need use v2.0 to replace v1.0. copy modis_ndvi_v2.0 to modis_ndvi.
+
+ 

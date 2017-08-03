@@ -1,0 +1,129 @@
+
+import numpy as np
+
+from int_tabulated import *
+
+def GetNDVItoDate(NDVI, Time, Start_End, bpy, DaysPerBand, CurrentBand):
+   #;
+   #;jzhu,8/9/2011,This program calculates total ndvi integration (ndvi*day) from start of season to currentband, the currentband is the dayindex of interesting day.
+   #
+   FILL=-1.0
+
+   #nSize=NDVI.shape
+
+   #sSize=Start_End['SOST'].shape
+
+   #if nSize[0] == sSize[0]:
+
+      #ny=sSize[sSize[0]]
+
+   #else:
+
+   #    ny=1
+
+
+   ny=1
+
+   #;DaysPerBand=365./bpy
+
+
+   #NowT=np.arange(ny)*bpy + CurrentBand
+
+   NowT=CurrentBand   #CurrentBand is the index of NDVI
+
+   NowN=NDVI[NowT]
+
+   SeasonLength=NowT-Start_End['SOST']
+
+   #a=np.where(SeasonLength == 0)[0]
+
+   #na=len(a)
+
+   #if (na > 0):
+
+   #   SeasonLength[a] = -1.0e-6
+
+   icount=0
+
+   NDVItoDate=np.zeros(ny)+FILL
+
+
+   #b=np.where(Start_End['SOST'] < 0)[0]
+
+   #nb=len(b)
+
+   Start_End['SOST'] < 0:
+   #if nb > 0:
+
+      SeasonLength = FILL
+
+
+   for i in range(ny): #<1>
+
+      if SeasonLength[i] > 0 and SeasonLength[i] < bpy:  #<2>
+
+            XSeg=     Time[ np.ceil(Start_End['SOST'][i]) : np.floor(NowT[i])  ]
+
+            NDVILine= NDVI[ np.ceil(Start_End['SOST'][i]) : np.floor(NowT[i])  ]
+
+            if  XSeg[0] != Start_End['SOST'][i]:  #<3>
+
+                  XSeg=np.concatenate([ np.array( [Start_End['SOST'][i]] ), XSeg])
+
+                  NDVILine=np.concatenate([ np.array([ Start_End['SOSN'][i] ]), NDVILine])
+            #<3>
+
+            if XSeg[len(XSeg)-1] != NowT[i] : #<4>
+
+               XSeg=np.concatenate( [XSeg, NowT[i]] )
+
+               NDVILine=np.concatenate([NDVILine, NowN[i]] )
+
+            #<4>
+
+
+            BaseLine=XSeg*0+Start_End['SOSN'][i]
+
+            # get rid of duplicated point and sort the XSeg
+
+            XSeg, index=np.unique(XSeg,return_index=True)
+
+            NDVILine=NDVILine[index]
+
+            BaseLine=BaseLine[index]
+
+            IntNDVI=Int_Tabulated(XSeg, NDVILine)
+
+            IntBase=Int_Tabulated(XSeg, BaseLine)
+
+            NDVItoDate[i]=(IntNDVI-IntBase)*DaysPerBand
+
+
+            if icount == 0 : #<5>
+
+               GSN=NDVILine
+
+               GST=XSeg
+
+               GSB=BaseLine
+
+            else:  #<5>
+
+               GSN=np.concatenate([GSN, NDVILine])
+
+               GST=np.concatenate([GST, XSeg])
+
+               GSB=np.concatenate([GSB, BaseLine])
+            #<5>
+
+            icount=icount+1
+
+
+      else:  #<2>
+          NDVItoDate[i]=FILL
+
+   #<1>
+
+   NDVItoDate={'NDVItoDate':NDVItoDate,'NowT':NowT,'NowN':NowN}
+
+   return NDVItoDate

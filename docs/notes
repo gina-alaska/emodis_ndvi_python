@@ -1,0 +1,182 @@
+***************************Environment Definition ******************************
+dir_ndvi=/home/jiang/nps/cesu/modis_ndvi_250m
+dir_script=$dir_ndvi/scripts
+dir_idlprg=$dir_ndvi/wkspace_nothreshold/idlprog_nothreshold
+dir_wrk=$dir_ndvi/wrkdir
+dir_raw=/mnt/pod/ndvi_emodis_archive/emodis/Alaska/historical/TERRA
+
+.bashrc includes: export IDL_STARTUP=/home/jiang/nps/cesu/modis_ndvi_250m/startup_nps_ndvi.pro
+
+/home/jiang/nps/cesu/modis_ndvi_250m/startup_nps_ndvi.pro includes:
+ENVI, /RESTORE_BASE_SAVE_FILES
+PREF_SET, 'IDL_PATH', '<IDL_DEFAULT>:+/home/jiang/nps/cesu/bin', /COMMIT
+end
+ 
+*******************************************************************************
+
+0. download raw data and save them at $dir_raw
+
+$dir_script/download_emodis_oneyear.bash $dir_raw $year
+
+
+1. unzip one year raw data in $dir_raw/$year and store in $dir_wrk/$year
+
+$dir_script/unzip_ndvi_v2.bash $dir_raw $dir_wrk $year
+
+
+2. product two file lists (flist_ndvi, flist_bq) in $dir_wrk/$year
+
+$dir_script/flist_v2.bash $dir_wrk $year
+
+
+3. produce two one-year-stack files. 
+$dir_script/one_year_file_v2.bash flist_ndvi, flist_bq 
+this bash script calls oneyear_data_layer_subset_good_ver9.pro to produce an one-year-stack file
+
+(alternative)
+cd $dir_ndvi
+idlde
+load workspace:$dir_ndvi/wkspace_nothreshold
+.run oneyear_data_layer_subset_good_ver9, flist_ndvi, flist_bq, ul, lr
+
+
+4. calculate one-year mdvi metrics
+
+
+program:smooth_calculate_metrics_tile_ver9.pro
+
+inputs:one-year-ndvi-stacked-file
+
+outputs:one-year-ndvi-smoothed-file, one-year-ndvi-metrics-file
+
+subroutines to call: time_series_process_nps_oneyear_ver9.pro
+
+process: read one-year-ndvi-stacked-file tile by tile (line by line). go through each pixel in the line,
+        call time_series_process_nps_oneyear_ver9.pro to process the time-series of each pixel,producing the smoothed time series and calculating metrics of the pixel. after go through every pixel, output smoothed data and metrics data.
+
+time_series_process_nps_oneyear_ver9.pro
+
+inputs:time_series, band_name_of_time_series
+
+outputs:out_interpolated, out_smoothed,out_bandname,out_metrics
+
+soubroutines to call:interpol_noextension_1y_vector_ver10.pro, wls_smooth.pro,user_metrics_nps_by1yr.pro
+
+process: read time_series and related band_name_of_time_series, call interpol_noextension_1y_vector_ver10.pro to interpolate the time_series; call wls_smooth.pro to smooth the time_series; call user_metrics_nps_by1yr.pro to calculate the metrics.
+  
+interpol_noextension_1y_vector_ver10.pro
+
+inputs:mid_year_cb,mid_year_bn,threshold,snowcld 
+outputs:v_interp, v_bq_interp, v_bname_interp,ratio,mid_stnum,mid_ednum,flg_metrics
+
+subroutines: cutoff_interp_ver10.pro, oneyear_extension100b.pro,oneyear_extensionfillval.pro
+
+process:read time_series which includes ndvi and related type infomation and band name; if the number of "good" and "snow" points is great than 5 and the these points are great then 100b and the maximun value of the points are greater than 125b,set flg_metrics=1, otherwise, set flg_metrics=0; if flg_metrics=1, then call cutoff_interp_ver10.pro to interpolate the time_series,call oneyear_extension100b.pro to extend the time_series to a standard 52-point time_series; if flg_metrics=0, check if all points of the time_series are fill points, if yes, set flg_metrics=-1, then call oneyear_extensionfillval.pro to extend the time_series to a standard 52-point time_series.
+
+  
+
+
+
+
+
+
+
+/home/jiang/nps/cesu/modis_ndvi_250m/wkspace_nothreshold includes program, keeps "good" and "snow" point, interpolates "fill point", 
+then move negative points into 100 to 101; uses wl=[35,35], do not use 20% threhold, purely use crossover to determine the SOS or EOS.
+for SOS,looks for the crossover point with the most greate possitive slope as the possiblex, then looks the first "not snow" point in possibx to last point as SOS;
+for EOS, looks for the crossover point with the minimum value slope as the possibx, then looks the last "not snow" point in 0 to possibx as EOS.
+
+
+/home/jiang/nps/cesu/modis_ndvi_250m/wkspace_stackedraw includes program, fist, use 20% line to get the fist 20% point and last 20% point,
+from 0 to firat 20% point, move gegative point into 100 to 10, first 20% to last 20%, interpolate missing point( witj value=80b and type=10b),
+move negative value to 100 to 101, from last 20% to last point, change negative value points into 100 to 101. 
+uses wl=[35,35], for SOS, find crossover point which is the most close to the first 20% point as a possiblex, then looks the first "good" point in possibx to last point as SOS;
+for EOS, find the crossover point which is the most close to the last 20% point as possibx, then looks for the last "good" point in 0 to possibx as EOS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+time_series_process_nps.pro 
+
+time_series_process_nps_v3.pro uses three-year vector to calculate metrics.
+
+time_series_process_nps_v3.pro calls user_metrics_nps_v3.pro. 
+
+final idl programs are in /home/jiang/nps/cesu/modis_ndvi_250m/wkspace_nothreshold
+
+in /home/jiang/nps/cesu/modis_ndvi_250m/, idlde, wrkspace :/home/jiang/nps/cesu/modis_ndvi_250m/wkspace_nothreshold
+
+
+
+2017/7/28
+
+copy nps/cesu/modis_ndvi_metrics_v1.0 to chinook
+
+lauch idlde
+
+in prefereance
+
+add IDL_PATH=/u1/uaf/jzhu4/projects/nps/bin
+
+2017/8/29
+
+how to set up chinook ssh key and put into github /repository
+
+1. create ssh keys in chinnok
+
+ssh-keygen
+
+2. add public key to github
+
+login github.com
+
+click profile, click setting, click new ssh key
+
+
+new a repository in github
+
+create git repository "modis_ndvi_metrics_chinnok" at chinook and connect it to github
+
+
+
+Quick setup — if you’ve done this kind of thing before
+
+HTTPS: https://github.com/gina-alaska/modis_ndvi_metrics_chinook.git
+SSH: git@github.com:gina-alaska/modis_ndvi_metrics_chinook.git
+
+choose ssh protocal
+
+We recommend every repository include a README, LICENSE, and .gitignore.
+…or create a new repository on the command line
+
+echo "# modis_ndvi_metrics_chinook" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin git@github.com:gina-alaska/modis_ndvi_metrics_chinook.git
+git push -u origin master
+…or push an existing repository from the command line
+
+git remote add origin https://github.com/gina-alaska/modis_ndvi_metrics_chinook.git
+git push -u origin master
+…or import code from another repository
+You can initialize this repository with code from a Subversion, Mercurial, or TFS project.
+
+

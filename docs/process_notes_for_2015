@@ -1,0 +1,97 @@
+02/01/2017, produce 2016 eMODIS NDVI metrics
+
+
+work on the chinook.alaska.edu
+
+#qsub -q debug -l nodes=1:ppn=16 -X -I
+
+
+define variables:
+
+rawdata_dir=/projects/UAFGINA/project_data/emodis/Alaska/historical/TERRA
+
+result_dir=/projects/UAFGINA/project_data/emodis/nps-metrics
+
+work_dir=/center/w/jzhu4/nps/ndvi
+
+year=2016
+
+script_dir=/u1/uaf/jzhu/nps/cesu/modis_ndvi_metrics/scripts/ver_for_$year
+
+cd $script_dir
+
+edit ./1yr_emodis_250_env.bash to make sure the directories are correct
+
+source ./1yr_emodis_250_env.bash
+
+1. download $year 7-day composite from eMODIS site
+
+ https://dds.cr.usgs.gov/emodis/Alaska/historical/TERRA/$year
+
+wget --user jiang@gina.alaska.edu --password Gina7Zhu -r -nH --reject="index.html*" -A "*NDVI*QKM*.zip" $url/$year
+
+
+./1yr_emodis_250_download_withauthoration.bash /projects/UAFGINA/project_data $year
+
+
+data are downloaded at $dir_raw/$year.
+
+2. unzip one year of raw data in $dir_raw/$year and store in $dir_wrk/$year
+
+./1yr_emodis_250_unzip_v2.bash $rawdata_dir $work_dir $year
+
+3. produce two file lists (yyyy_flist_ndvi, yyyy_flist_bq) in $dir_wrk/$year
+
+./1yr_emodis_250_flist.bash /center/w/jzhu4/nps/ndvi $year
+
+
+4. produce two one-year-stack files. 
+
+$dir_script/1yr_emodis_250_stack_v2.bash /center/w/jzhu4/nps/ndvi/$year/$year_flist_ndvi /center/w/jzhu4/nps/ndvi/$year/$year_flist_bq 0 0 0 0
+ 
+this bash script calls oneyear_data_layer_subset_good_ver9.pro to produce an one-year-stack file pair: 2015_oneyear_layer_subset_good and 2015_oneyear_layer_subset_good.hdr
+
+at $dir_wrk/$year
+
+5. calcualte one-year ndvi metrics
+
+./1yr_emodis_250_calmetrics_v2.bash /center/w/jzhu/nps/ndvi/2015/2015_oneyear_layer_subset_good
+
+produces two pairs of files:
+2015_oneyear_layer_subset_good_metrics_ver16m1_3,
+2015_oneyear_layer_subset_good_metrics_ver16m1_3.hdr,
+2015_oneyear_layer_subset_good_smooth_ver16m1_3,
+2015_oneyear_layer_subset_good_smooth_ver16m1_3.hdr.
+
+
+6. copy results to $dir_des/${year}
+
+mkdir $dir_des/${year}
+
+mv $dir_wrk/$year/${year}_* $dir_des/${year}
+
+rm $dir_wrk/${year}/AK*
+
+
+7. scp results to panda
+
+
+in panda,
+
+cd 
+mkdir  ~/data/modis_ndvi/2015
+
+cd ~/data/modis_ndvi/2015
+ 
+scp -r jzhu@pacman13.arsc.edu:/projects/UAFGINA/project_data/emodis/nps-metrics/2015 .
+
+8. upload metrics data to dds.gina.alaska.edu
+
+the storage for dds.gina.alaska.edu is mounted at panda /auto/gis/gvolsnowndvi/eMODIS_NDVI
+
+sudo cp * /auto/gis/gvolsnowndvi/eMODIS_NDVI/eMODIS_derived_NDVI_metrics/version_1.0
+
+copy raw data from pacman to panda /auto/gis/gvolsnowndvi/eMODIS_NDVI/eMODIS_TERRA_NDVI_data
+
+
+

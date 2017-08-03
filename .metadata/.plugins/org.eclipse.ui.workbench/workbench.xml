@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench version="2.0">
+<workbenchAdvisor/>
+<window height="1231" width="2092" x="356" y="71">
+<fastViewData fastViewLocation="1024">
+<orientation position="512" view="org.eclipse.debug.ui.DebugView"/>
+</fastViewData>
+<perspectiveBar>
+<itemSize x="0"/>
+</perspectiveBar>
+<coolbarLayout>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="442" y="79"/>
+<coolItem id="com.rsi.idldt.ui.textedit.toolbar" itemType="typeToolBarContribution" x="564" y="79"/>
+<coolItem id="com.rsi.idldt.ui.toolbar.debugTools" itemType="typeToolBarContribution" x="772" y="79"/>
+</coolbarLayout>
+<page aggregateWorkingSetId="Aggregate for window 1469749596218" focus="true" label="Workspace - IDL">
+<editors>
+<editorArea activeWorkbook="DefaultEditorWorkbook">
+<info part="DefaultEditorWorkbook">
+<folder appearance="1" expanded="2">
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+</editorArea>
+</editors>
+<views>
+<view id="org.eclipse.ui.navigator.ProjectExplorer" partName="Project Explorer">
+<viewState CommonNavigator.LINKING_ENABLED="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0"/>
+</view>
+<view id="com.rsi.idldt.ui.views.CommandHistoryView" partName="Command History"/>
+<view id="com.rsi.idldt.console.IDLConsoleView" partName="IDL Console">
+<viewState/>
+</view>
+<view id="org.eclipse.debug.ui.DebugView" partName="Debug">
+<viewState/>
+</view>
+<view id="org.eclipse.ui.views.ProblemView" partName="Problems">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<columnWidths org.eclipse.ui.ide.locationField="195" org.eclipse.ui.ide.markerType="195" org.eclipse.ui.ide.pathField="260" org.eclipse.ui.ide.resourceField="195" org.eclipse.ui.ide.severityAndDescriptionField="650"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
+<view id="org.eclipse.debug.ui.VariableView" partName="Variables">
+<viewState/>
+</view>
+<view id="org.eclipse.ui.views.ContentOutline" partName="Outline"/>
+</views>
+<perspectives activePart="com.rsi.idldt.console.IDLConsoleView" activePerspective="com.rsi.idldt.ui.IDLPerspective">
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="com.rsi.idldt.internal.ui.IDLPerspectiveFactory" id="com.rsi.idldt.ui.IDLPerspective" label="IDL"/>
+<alwaysOnActionSet id="com.rsi.idldt.tasks.actionSets.Wizard"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.CmdLine"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Run"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Wizard"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Help"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.MacroActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.CodingActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.debugActionSet"/>
+<show_view_action id="org.eclipse.search.ui.views.SearchView"/>
+<show_view_action id="org.eclipse.ui.views.ProblemView"/>
+<show_view_action id="org.eclipse.ui.views.TaskList"/>
+<show_view_action id="org.eclipse.ui.views.BookmarkView"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="com.rsi.idldt.console.IDLConsoleView"/>
+<view id="com.rsi.idldt.ui.views.CommandHistoryView"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
+<view id="org.eclipse.ui.navigator.ProjectExplorer"/>
+<view id="org.eclipse.ui.views.ContentOutline"/>
+<view id="org.eclipse.debug.ui.VariableView"/>
+<fastViews>
+<view id="org.eclipse.debug.ui.DebugView" ratio="0.3"/>
+</fastViews>
+<fastViewBars/>
+<layout>
+<mainWindow>
+<info folder="true" part="left">
+<folder activePageID="org.eclipse.ui.navigator.ProjectExplorer" appearance="2" expanded="2">
+<page content="org.eclipse.ui.navigator.ProjectExplorer" label="Project Explorer"/>
+<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
+<page content="org.eclipse.debug.ui.VariableView" label="Variables"/>
+<page content="org.eclipse.ui.views.ResourceNavigator" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.7495049" ratioLeft="757" ratioRight="253" relationship="2" relative="left">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+</folder>
+</info>
+<info part="com.rsi.idldt.HierarchyView" ratio="0.7" ratioLeft="707" ratioRight="303" relationship="2" relative="left"/>
+<info folder="true" part="bottom" ratio="0.599359" ratioLeft="374" ratioRight="250" relationship="4" relative="left">
+<folder activePageID="com.rsi.idldt.console.IDLConsoleView" appearance="2" expanded="2">
+<page content="com.rsi.idldt.console.IDLConsoleView" label="IDL Console"/>
+<page content="com.rsi.idldt.ui.views.CommandHistoryView" label="Command History"/>
+<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
+<page content="org.eclipse.search.ui.views.SearchView" label="LabelNotFound"/>
+<page content="org.eclipse.debug.ui.BreakpointView" label="LabelNotFound"/>
+<page content="*" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.49915493" ratioLeft="886" ratioRight="889" relationship="2" relative="left"/>
+</mainWindow>
+</layout>
+</perspective>
+</perspectives>
+<workingSets/>
+<navigationHistory/>
+<input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
+</page>
+<workbenchWindowAdvisor/>
+<actionBarAdvisor/>
+<trimLayout>
+<trimArea IMemento.internal.id="128">
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
+</trimArea>
+<trimArea IMemento.internal.id="1024">
+<trimItem IMemento.internal.id="org.eclise.ui.internal.FastViewBar"/>
+<trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
+</trimArea>
+</trimLayout>
+</window>
+<mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="fmetricsoncube.pro" tooltip="codes/fmetricsoncube.pro">
+<persistable path="/codes/fmetricsoncube.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="metricsoncube.pro" tooltip="codes/metricsoncube.pro">
+<persistable path="/codes/metricsoncube.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="gettotndvi.pro" tooltip="codes/gettotndvi.pro">
+<persistable path="/codes/gettotndvi.pro"/>
+</file>
+</mruList>
+</workbench>

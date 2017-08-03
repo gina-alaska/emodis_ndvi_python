@@ -1,0 +1,113 @@
+02/02/2017, produce 2016 eMODIS NDVI metrics
+
+jzhu4@chinnok.alaska.edu
+
+#work on the computing node
+
+#qsub -q debug -l nodes=1:ppn=16 -X -I
+
+cd ~/projects/nps/modis_ndvi_metrics_1.0/scripts
+
+cp -r ver_for_2015 ver_for_2016
+
+cd ver_for_2016
+
+define variables:
+
+year=2016
+export rawdata_dir=/projects/UAFGINA/project_data/emodis/Alaska/historical/TERRA
+export work_dir=$CENTER/nps/ndvi
+export script_dir=~/nps/cesu/modis_ndvi_metrics/scripts/ver_for_2016
+export idlprg_dir=~/nps/cesu/modis_ndvi_metrics/codes
+export result_dir=/projects/UAFGINA/project_data/emodis/nps-metrics
+export idl_dir=/usr/local/pkg/idl/idl-8.4.1/idl84/bin
+export algrithm_progs=/u1/uaf/jzhu4/projects/nps/modis_ndvi_metrics_v1.0/sav/codes.sav
+
+cd $script_dir
+
+edit ./1yr_emodis_250_env.bash to make sure the directories are correct
+
+source ./1yr_emodis_250_env.bash
+
+1. download 2016 7-day composite from eMODIS site
+
+ https://dds.cr.usgs.gov/emodis/Alaska/historical/TERRA/2016
+
+wget --user jiang@gina.alaska.edu --password Gina7Zhu -r -nH --reject="index.html*" -A "*NDVI*QKM*.zip" $url/$year
+
+
+./1yr_emodis_250_download_withauthoration.bash /projects/UAFGINA/project_data $year
+
+
+data are downloaded at $dir_raw/$year.
+
+2. unzip one year of raw data in $dir_raw/$year and store in $dir_wrk/$year
+
+./1yr_emodis_250_unzip_v2.bash $dir_raw $dir_wrk $year
+
+3. produce two file lists (yyyy_flist_ndvi, yyyy_flist_bq) in $dir_wrk/$year
+
+./1yr_emodis_250_flist.bash /center/w/jzhu4/nps/ndvi $year
+
+4. produce two one-year-stack files. 
+ 
+this bash script calls oneyear_data_layer_subset_good_ver9.pro to produce an one-year-stack file pair: $year_oneyear_layer_subset_good and $year_oneyear_layer_subset_good.hdr at $work_dir/$year
+
+5. calcualte one-year ndvi metrics
+
+./1yr_emodis_250_calmetrics_v2.bash $work_dir/$year/$year_oneyear_layer_subset_good
+
+produces two pairs of files:
+$year_oneyear_layer_subset_good_metrics_ver16m1_3,
+$year_oneyear_layer_subset_good_metrics_ver16m1_3.hdr,
+$year_oneyear_layer_subset_good_smooth_ver16m1_3,
+$year_oneyear_layer_subset_good_smooth_ver16m1_3.hdr.
+
+at $work_dir/$year
+
+6. copy results to $dir_des/${year}
+
+mkdir $result_dir/${year}
+
+mv $dir_wrk/$year/${year}_* ${result_dir}/${year}
+
+rm $dir_wrk/${year}/AK*
+
+
+7. scp results to panda
+
+
+in panda,
+
+cd 
+
+mkdir  ~/data/modis_ndvi/2016
+
+cd ~/data/modis_ndvi/2016
+ 
+scp -r jzhu4@chinook.alaska.edu:/projects/UAFGINA/project_data/emodis/nps-metrics/2016 .
+
+8. upload metrics data to dds.gina.alaska.edu
+
+the storage for dds.gina.alaska.edu is mounted at panda /auto/gis/gvolsnowndvi/eMODIS_NDVI
+
+sudo cp * /auto/gis/gvolsnowndvi/eMODIS_NDVI/eMODIS_derived_NDVI_metrics/version_1.0
+
+copy raw data from pacman to panda /auto/gis/gvolsnowndvi/eMODIS_NDVI/eMODIS_TERRA_NDVI_data
+
+
+9. git backup
+
+git add .
+
+git commit -m"process 2016 NDVI metrics, 2017/2/5"
+
+git push
+
+Fetch URL: git@github.com:gina-alaska/modis_ndvi_metrics_chinook.git
+
+
+
+push URL: git@github.com:gina-alaska/modis_ndvi_metrics_chinook.git
+
+

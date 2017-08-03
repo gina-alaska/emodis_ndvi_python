@@ -1,0 +1,39 @@
+12/05/2014, produce 2014 eMODIS NDVI metrics
+
+1. download 2014 7-day composite from eMODIS site
+
+cd /u1/uaf/jzhu/nps/cesu/modis_ndvi_metrics/scripts
+
+./1yr_emodis_250_download.bash /projects/UAFGINA/project_data 2014
+
+2. unzip one year of raw data in $dir_raw/$year and store in $dir_wrk/$year
+
+dir_raw=/projects/UAFGINA/project_data/emodis/distribution/Alaska/historical/TERRA
+
+dir_wrk=/center/w/jzhu/nps/ndvi
+
+./1yr_emodis_250_unzip.bash $dir_raw $dir_wrk 2014
+
+3. produce two file lists (yyyy_flist_ndvi, yyyy_flist_bq) in $dir_wrk/$year
+
+./1yr_emodis_250_flist.bash /center/w/jzhu/nps/ndvi 2014
+
+4. produce two one-year-stack files. 
+
+$dir_script/1yr_emodis_250_stack_v2.bash $dir_wrk/$year/2014_flist_ndvi, $dir_wrl/$year/2014_flist_bq 0 0 0 0
+ 
+this bash script calls oneyear_data_layer_subset_good_ver9.pro to produce an one-year-stack file pair: 2014_oneyear_layer_subset_good and 2014_oneyear_layer_subset_good.hdr
+
+5. calcualte one-year ndvi metrics
+
+./1yr_emodis_250_calmetrics_v2.bash /center/w/jzhu/nps/ndvi/2014/2014_oneyear_layer_subset_good
+
+produces two pairs of files:2014_oneyear_layer_subset_good_metrics_ver16m1_3,2014_oneyear_layer_subset_good_metrics_ver16m1_3.hdr
+                         2014_oneyear_layer_subset_good_smooth_ver16m1_3, 2014_oneyear_layer_subset_good_smooth_ver16m1_3.hdr
+
+
+
+
+
+
+
