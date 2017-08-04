@@ -1,0 +1,12 @@
+#jzhu, 2017/8/4
+#stack program must be run in xterm environment
+#ssh -XY jiang@gateway.gina.alaska.edu
+#ssh -XY jzhu4@panda.x.gina.alaska.edu
+
+#data are stored at /home/jzhu4/data/modis_ndvi/2016-test/2016
+
+./1yr_emodis_250_flist.bash /home/jzhu4/data/modis_ndvi/2016-test 2016
+
+./1yr_emodis_250_stack.bash /home/jzhu4/data/modis_ndvi/2016-test/2016/2016_flist_ndvi /home/jzhu4/data/modis_ndvi/2016-test/2016/2016_flist_bq 0 0 0 0
+
+./1yr_emodis_250_calmetrics_v2.bash /home/jzhu4/data/modis_ndvi/2016-test/2016/2016_oneyear_layer_subset_good
