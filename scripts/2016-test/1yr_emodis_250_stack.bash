@@ -8,7 +8,7 @@
 #ul_lon=-173.0d,ul_lat=72.0d
 #lr_lon=-127.999116667d,lr_lat=54.000019444d
 #if do not want subsize, input: 0,0,0,0 for four conor cooordinates
-
+#this is for 2016-test
 
 #check if input parameters are correct
 
