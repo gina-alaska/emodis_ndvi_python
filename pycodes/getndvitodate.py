@@ -13,7 +13,7 @@ def GetNDVItoDate(NDVI, Time, Start_End, bpy, DaysPerBand, CurrentBand):
 
    #;DaysPerBand=365./bpy
 
-   NowT=CurrentBand   #CurrentBand is the index of NDVI
+   NowT=CurrentBand   #CurrentBand is the index of NDVI, the index start from 0
 
    NowN=NDVI[NowT]
 
@@ -27,24 +27,28 @@ def GetNDVItoDate(NDVI, Time, Start_End, bpy, DaysPerBand, CurrentBand):
         SeasonLength = FILL
 
    if SeasonLength > 0 and SeasonLength < bpy:  #<2>
+        #index range
+        segl=int(np.ceil(Start_End['SOST'][0]))
 
-        XSeg=     Time[ np.ceil(Start_End['SOST'][0]) : np.floor(NowT )  ]
+        segh=int(np.floor(NowT )) + 1
 
-        NDVILine= NDVI[ np.ceil(Start_End['SOST'][0]) : np.floor(NowT )  ]
+        XSeg=     Time[ segl: segh ] #Xseg[Start_End['SOST'][0]:NowT]
 
-        if  XSeg[0] != Start_End['SOST'][0]:  #<3>
+        NDVILine= NDVI[ segl : segh ]
 
-                  XSeg  =    np.concatenate([ np.array( [Start_End['SOST'][0] ] ), XSeg])
+        #if  XSeg[0] != Start_End['SOST'][0]:  #<3>
 
-                  NDVILine = np.concatenate([ np.array([ Start_End['SOSN'][0] ] ), NDVILine])
+        #          XSeg  =    np.concatenate([ np.array( [Start_End['SOST'][0] ] ), XSeg])
+
+        #          NDVILine = np.concatenate([ np.array([ Start_End['SOSN'][0] ] ), NDVILine])
         #<3>
 
 
-        if XSeg[len(XSeg)-1] != NowT : #<4>
+        #if XSeg[len(XSeg)-1] != NowT : #<4>
 
-                  XSeg  =   np.concatenate( [XSeg,     np.array([NowT]) ] )
+        #          XSeg  =   np.concatenate( [XSeg,     np.array([NowT]) ] )
 
-                  NDVILine= np.concatenate( [NDVILine, np.array([NowN]) ] )
+        #          NDVILine= np.concatenate( [NDVILine, np.array([NowN]) ] )
 
         #<4>
 
@@ -69,6 +73,6 @@ def GetNDVItoDate(NDVI, Time, Start_End, bpy, DaysPerBand, CurrentBand):
 
         NDVItoDate[0]=FILL
 
-   NDVItoDate={'NDVItoDate':NDVItoDate,'NowT':NowT,'NowN':NowN}
+   NDVItoDate={'NDVItoDate':NDVItoDate[0],'NowT':NowT,'NowN':NowN}
 
    return NDVItoDate

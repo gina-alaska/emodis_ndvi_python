@@ -23,7 +23,7 @@ def read_ndvi(t_fn,d_fn,ulx,uly,lrx,lry,bandname):
 
     #---determine if doing subset
 
-    if not (ulx == 0.0 and uly == 0.0 and lrx == 0.0 and lry == 0.0): #do not do subset
+    if not (ulx == 0.0 and uly == 0.0 and lrx == 0.0 and lry == 0.0): # do subset
   
        # subseting the file
 

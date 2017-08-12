@@ -89,7 +89,9 @@ def array2raster(newRasterfn,rasterfn,array,bandname):
     outRaster = None
 
 def write_raster(newRasterfn,rasterfn,array,bandname):
-
+    
+    '''use raster geo info from rasterfn, write 3d array with band name into newRasterfn. array(bandnumber, ysize, xsize). dtype of the array must be unint8, float32
+    '''
     raster = gdal.Open(rasterfn)
 
     geotransform = raster.GetGeoTransform()
@@ -117,14 +119,13 @@ def write_raster(newRasterfn,rasterfn,array,bandname):
 
     outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
     
-    for i in range(1,bnum+1):
+    for i in range(bnum):
 
-      outband = outRaster.GetRasterBand(i)
+      outband = outRaster.GetRasterBand(i+1)
 
-      outband.SetDescription(bandname(i))
+      outband.SetDescription(bandname[i])
 
-
-    outband.WriteArray(array)
+      outband.WriteArray(array[i,:,:])
 
     outRasterSRS = osr.SpatialReference()
 

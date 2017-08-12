@@ -4,8 +4,8 @@ def GetCrossOver_percentage_extremeslope(XRef,YRef, XData,YData, mv_percent, bq,
    
    #;jzhu, modified from GetCrossOver2.pro
    #inputs:
-   #XRef=Time,1D
-   #YRef=NDVI,1D
+   #XRef=Time,1D,
+   #YRef=NDVI,1D, NDVI
    #XData=Time,1D
    #YData=FMA/BMA,1D
    #mv_percent---user define percentage of max NDVI value as a threshold mv_percent=0.2   
@@ -216,7 +216,7 @@ def GetCrossOver_percentage_extremeslope(XRef,YRef, XData,YData, mv_percent, bq,
            
          if xslopemax == 0.0: # not find maximun slope point, use middle point
              XPts[iCount]=bpy/2.0 -1 
-             YPts[iCount]=YRef(bpy/2.0-1) 
+             YPts[iCount]=YRef[bpy/2.0-1]
          else:
              XPts[iCount]=xslopemax
              YPts[iCount]=yslopemax
@@ -230,7 +230,7 @@ def GetCrossOver_percentage_extremeslope(XRef,YRef, XData,YData, mv_percent, bq,
       if UP:
           if xslopemin == 0.0: #; not find the minimum slope point, use middle point
              XPts[iCount]=bpy/2.0
-             YPts[iCount]=YRef[bpy/2.0]
+             YPts[iCount]=YRef[bpy/2]
           else:
              XPts[iCount]=xslopemin
              YPts[iCount]=yslopemin

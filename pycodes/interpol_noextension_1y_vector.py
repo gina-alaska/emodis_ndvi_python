@@ -8,9 +8,9 @@ from cutoff_interp_v2 import *
 
 def interpol_noextension_1y_vector(mid_year, mid_year_bq, mid_year_bn,threshold,snowcld):
    #inputs:
-   # mid_year---one-year-ndvi
+   #mid_year---one-year-ndvi
    #mid_year_bq---one-year quality
-   # mid_year_bn---one-year ndvi band name
+   #mid_year_bn---one-year ndvi band name
    #threshold---80b
    #snowcld---60b
    #outputs:

@@ -11,8 +11,9 @@ def filter_2odd( rin,uprate,downrate):
     #inputs:rin---vector, uprate--up_slope_threshold=0.25 ,downratre--down_slope_threshold=0.25
     #output:r
     
-    r=np.copy(rin)
-
+    r=np.copy(rin).astype('int')
+    
+    
     if min(rin) != max(rin): #do filting
 
        num=len(r) #; number of points in the vector r

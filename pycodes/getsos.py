@@ -115,6 +115,7 @@ def GetSOS(cross, NDVI, bq, x, bpy, FMA):
    #3. compare x20 and possiblex, pick greater one
 
 
+
    if possibx < x20:   #;  make sure possiblx equal or greater than x20
         
         possibx=x20

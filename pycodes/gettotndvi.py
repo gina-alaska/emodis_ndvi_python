@@ -23,13 +23,20 @@ def GetTotNDVI(NDVI, Time, Start_End, bpy, DaysPerBand):
 
    na=len(a)
 
-   if (na > 0):
-       SeasonLength[a] = -1.0e-6
+   if na>0:
 
-   BaseSlope=(Start_End['EOSN']-Start_End['SOSN'])/SeasonLength
+   #if SeasonLength[0] == 0:
+
+       SeasonLength_tmp=-1.0e-6
+
+       BaseSlope=(Start_End['EOSN']-Start_End['SOSN'])/SeasonLength_tmp
+
+   else:
+
+       BaseSlope=(Start_End['EOSN']-Start_End['SOSN'])/SeasonLength
+
 
    BaseInt=Start_End['SOSN']-Start_End['SOST']*BaseSlope
-
 
    #;
    #; 1-D Data, ie a point as in

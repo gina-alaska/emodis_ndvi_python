@@ -82,10 +82,10 @@ def computemetrics_by1yr(NDVI,ndvi_raw,bq,bn,wl,bpy,CurrentBand, DaysPerBand):
 
    #;PRINT, 'COMPUTEMETRICS:NY:',ny
    #;   ny=n_elements(eos.eost)
-   SOST = Start_End['SOST']
-   SOSN = Start_End['SOSN']
-   EOST = Start_End['EOST']
-   EOSN = Start_End['EOSN']
+   SOST = Start_End['SOST'][0]
+   SOSN = Start_End['SOSN'][0]
+   EOST = Start_End['EOST'][0]
+   EOSN = Start_End['EOSN'][0]
 
    MaxND=GetMaxNDVI(ndvi_raw, Time, Start_End,bpy)             #;dayindex and related maximun ndvi value
 
@@ -95,10 +95,13 @@ def computemetrics_by1yr(NDVI,ndvi_raw,bq,bn,wl,bpy,CurrentBand, DaysPerBand):
                                                                #; time vector (start to end).
                                                                #; GrowingSeasonT=GST, GrowingSeasonN=GSN, GrowingSeasonB=GSB)
 
-   #NDVItoDate=GetNDVItoDate(NDVI, Time, Start_End, bpy, DaysPerBand, CurrentBand) #; ndvi*day, nowT (dayindex),nowN
+   #NDVItoDate calcualte the integration of NDVI between start oof season SOST and currentBand index
+
+   NDVItoDate=GetNDVItoDate(NDVI, Time, Start_End, bpy, DaysPerBand, CurrentBand) #; ndvi*day, nowT (dayindex),nowN
+
    #NDVItoDate has some problem, need figure out
 
-   NDVItoDate={'NDVItoDate':0.0,'NowT':0.0,'NowN':0.0}
+   #NDVItoDate={'NDVItoDate':0.0,'NowT':0.0,'NowN':0.0}
 
    Slope=GetSlope(Start_End, MaxND, bpy, DaysPerBand) #;slope = ndvi/day
    
