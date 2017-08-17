@@ -178,9 +178,9 @@ def raster_comb(outRasterfn, rasterfn):
     dst.FlushCache()
 
     dst = None
-    outraster =None
-    raster =None
 
+    outraster =None
+    
     os.system('rm '+outRasterfn)
    
     os.system('mv '+tmp_file+' '+outRasterfn)
@@ -198,16 +198,13 @@ def subsection(file_name, someNewMinX, someNewMinY, someNewMaxX, someNewMaxY):
     dataset = gdal.Open(file_name)
     band = dataset.GetRasterBand(1)
     transform = dataset.GetGeoTransform()
-
     cols = dataset.RasterXSize
     rows = dataset.RasterYSize
     transform = dataset.GetGeoTransform()
     minx = transform[0]
     maxx = transform[0] + cols * transform[1] + rows * transform[2]
-
     miny = transform[3] + cols * transform[4] + rows * transform[5]
     maxy = transform[3]
-
     width = maxx - minx
     height = maxy - miny
 

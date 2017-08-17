@@ -11,122 +11,105 @@ def GetSOS(cross, NDVI, bq, x, bpy, FMA):
    #;if sos_possib1 > 20% point, sos_possib2 = sos_possi1, otherwise sos_possb2 = 20%point,find a nearest point from eos_possb2 to 1, which is not snow point,this point is SOS
     
    FILL=-1.
-   WinFirst=0.75 #;the maximum start season must less than WinFirst*bpy
-   WinMin=0.5
-   WinMax=1.5
+   
+   WinFirst=int(0.5*bpy)  #start season must less than WinFirst
 
-   #;---get idx of maximun ndvi point
-   num=len(NDVI)
+   WinMin=int(0.1*bpy)    #start season must be greater than WinMin
 
-   mxidx=np.where(NDVI == max(NDVI))[0]
-  
-   mxidxst=mxidx[0]
-
-   mxidxed=mxidx[len(mxidx)-1]
-
-   lastidx=num-1 #; lastidx
-
-   nFMA=len(FMA)
-
-   nNDVI=len(NDVI)
+   lastidx=len(NDVI)-1  #lastidx
 
    SOST=np.zeros(1, dtype=np.int16)
+
    SOSN=np.zeros(1, dtype=np.float)
+
    SOST[0]=FILL
+   
    SOSN[0]=FILL
 
-   #0. initial sosx and sosy
+   #0. initialize sosx and sosy
 
    sosx=0
 
    sosy=NDVI[sosx]
 
 
-   #1.find the correct 20% point x20,y20
+   #1.find valid 20% points. t=1 means the point is 20% point
  
-   idx20=np.where(cross['T'] == 1)[0]
-
+   c1=cross['T']==1
+   c2=cross['X']>WinMin
+   c3=cross['X']<WinFirst
+   idx20=np.where( c1&c2&c3 )[0]
+   
    cnt1=len(idx20)
-
-   if cnt1 <= 0:   #; <2> if no 20% point, set sosx as possiblx
-
-       x20=0
-
-       y20=NDVI[x20]
-
-
-   else:           #; <2> compare possibx with 20% point,<2>
-
-       #;--when more than one 20% points, choose the first one
-       x20=cross['X'][ idx20[0] ]
-
-       y20=cross['Y'][ idx20[0] ]
-
-
-
-   #2.find possibx cross over point in cross_only possibx, possiby
-
-   t0idx = np.where(cross['T'] == 0)[0] #; t0--crossover type
+   
+   #2.find crossover points, t=0 means the point is crossover point
+   
+   c1=cross['T']==0
+   #c2=cross['X']>WinMin
+   #c3=cross['X']<WinFirst
+   t0idx=np.where( c1&c2&c3 )[0]
 
    t0cnt=len(t0idx)
-
-   if t0cnt < 1:   #; <0> no  crossover points, possiblex=0
-
-       possibx=0
-
-       possiby=NDVI[possibx]
-     
-   else:          # ; <0> have crossover points,looking for possiblex
-     
-       cross_only={'X':cross['X'][t0idx], 'Y':cross['Y'][t0idx], 'S':cross['S'][t0idx],'T':cross['T'][t0idx],'C':cross['C'][t0idx], 'N':t0cnt}
+   
+   
+   if cnt1 <= 0:   #; <2>  no valid 20% points
        
        
-       FirstIdx=np.where( np.logical_and(cross_only['X'] < WinFirst*bpy, cross_only['X'] < mxidxst) )[0]
-
-       nFirstSOS=len(FirstIdx) #number of points of cross over which is not great than WinFirst*bpy
-
-       #I think possibx never houldn't be great than 28 for total 42 band
-
-
-       # get possiblex
-
-       if(nFirstSOS > 0):      #; <1> have possiblex
-
-
-           #g. use the crossover point which is the most close to the 20% point as possibx
-
-           FirstSOSIdx =np.where( abs( cross_only['X'][FirstIdx]-x20 ) == min( abs(cross_only['X'][FirstIdx]-x20 ) ) )[0]
-             
-           possibx = cross_only['X'][ FirstSOSIdx[ len(FirstSOSIdx)-1 ] ]
-        
-           possiby = cross_only['Y'][ FirstSOSIdx[ len(FirstSOSIdx)-1 ] ]
-
-       else:                  # ;<1> not possiblex
+       if t0cnt <=0: #<3> no valid 20% point or valid crossover point
 
            possibx=0
 
            possiby=NDVI[possibx]
-
-
-          
-
-
-
-   #3. compare x20 and possiblex, pick greater one
-
-
-
-   if possibx < x20:   #;  make sure possiblx equal or greater than x20
+       
+       else: #<3> no valid 20%, but have valid cross over points       
+       
+           cross_only={'X':cross['X'][t0idx], 'Y':cross['Y'][t0idx], 'S':cross['S'][t0idx],'T':cross['T'][t0idx],'C':cross['C'][t0idx], 'N':t0cnt}
+           
+           lst=len(cross_only['X'])-1 
+              
+           possibx = cross_only['X'][lst]
         
-        possibx=x20
+           possiby = cross_only['Y'][lst]
+           
+           
+       #<3>
+           
+   else: #; <2> have valid x20 points
+              
+           x20=cross['X'][idx20[0] ]
 
-        possiby=y20
+           y20=cross['Y'][idx20[0] ]
 
+           if t0cnt<=0: #<4> have valid 20% points, no valid crossover point
+
+               possibx=x20
+
+               possiby=y20
+           
+           else: #<4> have valid 20% point and valid crossover points
+
+               cross_only={'X':cross['X'][t0idx], 'Y':cross['Y'][t0idx], 'S':cross['S'][t0idx],'T':cross['T'][t0idx],'C':cross['C'][t0idx], 'N':t0cnt}
+               
+               v1=min( abs(cross_only['X']-x20 ) )
+                
+               FirstSOSIdx =np.where( abs( cross_only['X']-x20 ) == v1 )[0]
+             
+               possibx = cross_only['X'][ FirstSOSIdx[ len(FirstSOSIdx)-1 ] ]
+        
+               possiby = cross_only['Y'][ FirstSOSIdx[ len(FirstSOSIdx)-1 ] ]
+               
+               if possibx < x20:   #;  make sure possiblx equal or greater than x20
+        
+                  possibx=x20
+
+                  possiby=y20 
+              
+        #<4>
+   #<2>
         
    #4. the sos must not <=2 and must greater than WinFirst*bpy
 
-
-   if possibx <= 2 or possibx >= WinFirst*bpy:    #;<5>
+   if possibx <= WinMin or possibx >= WinFirst:    #;<5>
         
         sosx=0
 

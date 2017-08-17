@@ -1,4 +1,0 @@
-PRO  RubberBox
-
-
-END; RubberBox

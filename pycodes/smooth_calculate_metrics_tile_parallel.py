@@ -126,7 +126,7 @@ def main():
 
    for y in range(ysize):  #<1>  
 
-       print("proecssing "+str(y)+" lines (y direction)")
+       print("proecssing the "+str(y+1)+" th line of total "+str(ysize)+" lines")
 
        #ndvi_v=  data.ReadAsArray(x,y,1,1).flatten()
 
@@ -164,7 +164,7 @@ def main():
 
    rp.write_raster(fileout_metrics, filen_ndvi, np.float32(a_metrics), metrics_bname)
 
-   print( 'finishing smooth and calculation of metrics!')
+   print( 'finishing calculation of metrics!')
 
    return 0
 

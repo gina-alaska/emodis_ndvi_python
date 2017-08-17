@@ -1,42 +1,11 @@
 2017/7/14, jzhu, migrate NDVI algorithm from IDL code to python code.
-implement on panda, use anaconda2
 
-cd ~/apps/anaconda2/bin
-
-create a nps_ndvi environment
-
-./conda create --name nps_ndvi
-
-./conda info --envs
-
-source activate nps_ndvi
-
-#install qgis in the new env
-
-./conda install -c conda-forge qgis
-
-export PYTHONPATH=$PATHONPATH:/home/jzhu4/apps/anaconda2/pkgs/qgis-2.18.8-py27_1/share/qgis/python
-sometime needs add LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/jzhu4/apps/anaconda2/pkgs/qgis-2.18.8-py27_1/lib
-
-standalone script template
------------------------------------------------
-from qgis.core import *
-QgsApplication.setPrefixPath("/usr", True)
-qgs = QgsApplication([], False)
-qgs.initQgis()
-print ("hello,QGIS!")
-qgs.exitQgis()
------------------------------------------------
-
-
-found QGIS is complicated. I think I should use GDAL-python to do the project.
-
-https://pcjericks.github.io/py-gdalogr-cookbook/index.html
+/usr/bin/python
 
 prepare raw 7-day composite data
 
 download data
+
 cd /data/modis_ndvi/2016/emodis
 
 url=https://dds.cr.usgs.gov/emodis/Alaska/historical/TERRA
@@ -66,8 +35,12 @@ adfGeoTransform[4] /* 0 */
 adfGeoTransform[5] /* n-s pixel resolution (negative value) */
 
 
+stack one year of tif files
 
-1. stack one-year ndvi and quality files together 
-idl program: oneyear_data_layer_subset_good, '$flist_ndvi','$flist_bq','$ul_lon','$ul_lat', '$lr_lon','$lr_lat'
+python ./oneyear_data_layer_subset_good.py flist_ndvi flist_bq 0 0 0 0
+
+calcualte metrics
+
+python ./smooth_calculate_metrics_tile_parallel.py stack_ndvi stack_bq
 
 

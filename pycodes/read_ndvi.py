@@ -6,14 +6,20 @@ from osgeo import gdal
 def read_ndvi(t_fn,d_fn,ulx,uly,lrx,lry,bandname):
 #This progranm read a pair of files (ndvi and ndvi_bq), and stack, subset, return two file describers
 #inputs:
-#t_fn (file name of a *ndvi.tif file, d_fn (file name of a *ndvi_bq.tif)
-#ul (uper left coordinate in unit of degree),
-#lf (lower right coorinate in unit of degree).
+#t_fn---file name of a *ndvi.tif file
+#d_fn---file name of a *ndvi_bq.tif
+#ulx uper left x coordinate in unit of meter
+#uly---upper left y coordinate in unit of meter
+#lrx---lower right x coorinate in unit of meter
+#lry---lower right y coorinate in unit of meter
+#badname---bandname for NDVI metrics
 #output: rt_fid,rt_bq_fid
 
-#--- check t_fid, found map unit of t_fid is meters, so we define ul and lr in meters
-#ul=[-206833.75D, 1303877.50D]
-#lr=[ 424916.25D,  856877.50D]
+#example: t_fid, found map unit of t_fid is meters, so we define ul and lr in meters
+#ulx=-206833.75,
+#uly=1303877.50
+#lrx=424916.25
+#lry=856877.50D
 
 
     if platform.system() == 'Windows':

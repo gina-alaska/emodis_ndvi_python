@@ -32,7 +32,7 @@ def interpol_noextension_1y_vector(mid_year, mid_year_bq, mid_year_bn,threshold,
 
    cntv=len(idxv[0])
 
-   if cntv > 5: # only consider vector has 5 more points as valid vector
+   if cntv > 5: # only consider vector having 5 more valid or none snow points as valid vector
 
       idxv1=np.where( np.logical_and( mid_year[idxv] > 100, max(mid_year[idxv])-100 >= 25 ) ) #;maximum must be greater than 0.25
 

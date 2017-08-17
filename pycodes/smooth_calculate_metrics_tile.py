@@ -14,8 +14,8 @@ jzhu, 1/17/2012,this program combines moving average and threshold methodm it ca
 '''
 
 import sys
-import os
-from osgeo import gdal, ogr, osr
+#import os
+from osgeo import gdal
 import platform
 from read_ndvi import *
 import raster_process as rp
@@ -23,9 +23,7 @@ from time_series_process_nps_oneyear import *
 
 def main():
 
-   ver='py'
-
-   flg=0 # 0--success, 1-- fail
+   ver='py' 
 
    #accept commanline arguments: filen
 
@@ -60,8 +58,6 @@ def main():
 
    filebasen=filen_ndvi[p1+1:length-4]  # file name without affix '.tif'
 
-   year=filebasen[0:4]
-
    #----open smooth file and metrics file to ready to be writen.
 
    fileout_smooth=wrkdir+sign+filebasen+'_smooth_'+ver+'.tif'
@@ -88,7 +84,7 @@ def main():
 
    snowcld = 60 # snow and cloud are set into -4000, after convert into 0-200, they are 60
 
-   #get bandname from data
+   #get band name from data
 
    bnum=data.RasterCount
 
@@ -97,8 +93,6 @@ def main():
    ysize=data.RasterYSize
 
    bname=[]  #hold band names in raster data
-
-   vmetrics=np.zeros((metrics_bnum),dtype=np.float16)
 
    for i in range(1,bnum+1):  #band index from 1 to bnum
    
@@ -118,7 +112,7 @@ def main():
 
    for y in range(ysize):  
    
-      print('processing '+str(y)+' row of total '+str(ysize) )     
+      print('processing the '+str(y+1)+' th row of total '+str(ysize) )+' rows'     
 
       for x in range(xsize):
 
@@ -145,7 +139,7 @@ but a_metrics is dtype('float16'), change the a_metrics into float32
 
    rp.write_raster(fileout_metrics, filen_ndvi, np.float32(a_metrics), metrics_bname)
 
-   print( 'finishing smooth and calculation of metrics!')
+   print( 'finishing calculation of metrics!')
   
    return 0
 

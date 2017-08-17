@@ -1,45 +1,100 @@
 import numpy as np
-#This function calculate the crossover points 
+
 def GetCrossOver_percentage_extremeslope(XRef,YRef, XData,YData, mv_percent, bq, bpy, cross_direction):
-   
-   #;jzhu, modified from GetCrossOver2.pro
+   #;jzhu, 2017/8/15, modified from GetCross_percentage_extremeslope.pro
+   #This function calculates the crossover points, 20% popints, extremeslope points, and maximun value point. 
    #inputs:
-   #XRef=Time,1D,
+   #XRef=Time,1D,x axis for NDVI vector
    #YRef=NDVI,1D, NDVI
-   #XData=Time,1D
-   #YData=FMA/BMA,1D
-   #mv_percent---user define percentage of max NDVI value as a threshold mv_percent=0.2   
-   #bq=quality vector related XData, 1D
-   #bpy=number of points in XData, scalar
+   #XData=Time,1D, x axis for FMA/BMA vector
+   #YData=FMA/BMA,1D, forward/backward circular shift vector
+   #mv_percent---user defined percentage of max NDVI value as a threshold, usually mv_percent=0.2   
+   #bq=quality vector related YRef, 1D
+   #bpy=number of points in YRef, scalar, usually it equals to 42
    #CROSS_DIRECTION=YData crossover YRef, UP-YData cross over Yref from below
-   #DOWN, YData crossover Yref from above, ALL-YData cross over Yref from both below and above, cross_direction is one of UP,DOWN, ALL
-   #check the possible crossover points against bq, elimite the crossover which are not good type points
-   #;jzhu, get 20% of maximun points and maximun or minimun slope points, 
-   #;output points,xvalue,yvalue,slope,type(0-crossover,1-20%,2-extrmeslope)
-   #;jzhu,12/10/2011, Saturday, found orginal crossover algorithm sometime can not catch the crossover point,
-   #;use a another simple way to do this job. 
+   #DOWN, YData crossover Yref from above,cross_direction is one of UP,DOWN
+   #it calculates crossover points between YData to YRef, and crossover points between line 20%  and YRef,
+   #it also calcualtes maximun NDVI value points and maximun or minimun slope points for Yref. 
+   #;output points,xvalue,yvalue,slope,type(0-crossover,1-20%,2-maximun/minimun slope points,3-maximun value point)
+
+   WinFirst=int(0.5*bpy)  #start season must less than WinFirst
+
+   WinMin=int(0.1*bpy)    #start season must be greater than WinMin
    
-   #;get the indics
-   mxidx=np.where( YRef == max(YRef) )[0]
-   mxidxst=mxidx[0]
-   mxidxed=mxidx[len(mxidx)-1]
+   WinLast=int(0.5*bpy)  #end season must be greater than WinLast
+
+   WinMax=int(0.9*bpy)  #end season must be less than WinMax
+
+   #get the indics of YRef[Winmin:WinFirst]
+   
+   #firsthf=YRef[WinMin:WinFirst]   
+   
+   #maxv=max(firsthf)
+   
+   #minv=min(firsthf)
+   
+   #mxidx=np.where(firsthf == maxv )[0] + WinMin
+
+   #firsthfidx=mxidx[0]
+   
+   #v20down = mv_percent*( maxv-minv ) + minv
+   
+   #get the indics of YRef[WinMax:WinLast]
+   
+   #lasthf=YRef[WinMax:WinLast]   
+   
+   #maxv=max(lasthf)
+   
+   #minv=min(lasthf)
+   
+   #mxidx=np.where(lasthf == maxv )[0] + WinMax
+
+   #lasthfidx=mxidx[len(mxidx)-1]
+   
+   #v20up=mv_percent*( maxv-minv ) + minv
     
-   # define the line with NDVI value = mv_percent of max NDVI value
-   v20=mv_percent*max(YRef)
+   minv =min(YRef)    
+    
+   tmp=YRef[WinMin:WinMax]   
+   
+   maxv=max(tmp)
+   
+   mxidx=np.where(tmp == maxv )[0] + WinMin
+
+   firsthfidx=mxidx[0]
+   
+   lasthfidx=mxidx[len(mxidx)-1]
+   
+   v20down = mv_percent*( maxv-minv ) + minv
+       
+   v20up=v20down 
+    
    slopemax=0.0
+ 
    xslopemax=0.0
+ 
    yslopemax=0.0
+ 
    slopemin=0.0
+ 
    xslopemin=0.0
+ 
    yslopemin=0.0
    
    nSize = XRef.shape
+   
    nDim=  XRef.ndim
+
    oSize=nSize[0]
+
    XPts=np.zeros(oSize,dtype=np.int16)
+
    YPts=np.zeros(oSize,dtype=np.float16)
+
    SPts=np.zeros(oSize,dtype=np.float16)
+
    TPts=np.zeros(oSize,dtype=np.float16)
+
    CPts=np.zeros(oSize,dtype=np.float16)
 
    
@@ -164,10 +219,10 @@ def GetCrossOver_percentage_extremeslope(XRef,YRef, XData,YData, mv_percent, bq,
                iCount = iCount + 1
 
               
-            #;----- looking for crossover with line with Y=20% of maximun ndvi
+            #;looking for crossover with line with Y=20% of (maxndvi-minndvi) + minndvi 
 
-            if (YRef[i] <= v20 and v20 <= YRef[i+1]) and RSlope > 0 and DOWN: # found xstar
-               XStar1=int(np.ceil(XRef[i]+(v20-YRef[i])/RSlope))
+            if (YRef[i] <= v20down and v20down <= YRef[i+1]) and RSlope > 0 and DOWN: # found xstar
+               XStar1=int(np.ceil(XRef[i]+(v20down-YRef[i])/RSlope))
                XPts[iCount]=XStar1
                YPts[iCount]=YRef[XStar1]
                SPts[iCount]=RSlope
@@ -177,9 +232,9 @@ def GetCrossOver_percentage_extremeslope(XRef,YRef, XData,YData, mv_percent, bq,
            
             
             
-            if (YRef[i] >= v20 and v20 >= YRef[i+1]) and RSlope < 0 and UP: #; found xstar
+            if (YRef[i] >= v20up and v20up >= YRef[i+1]) and RSlope < 0 and UP: #; found xstar
               
-               XStar1=int(np.floor(XRef[i]+(v20-YRef[i])/RSlope))
+               XStar1=int(np.floor(XRef[i]+(v20up-YRef[i])/RSlope))
                XPts[iCount]=XStar1
                YPts[iCount]=YRef[XStar1]
                SPts[iCount]=RSlope
@@ -190,7 +245,7 @@ def GetCrossOver_percentage_extremeslope(XRef,YRef, XData,YData, mv_percent, bq,
  
             #;---get maximun slope for down and minimun slope for up
 
-            if RSlope >= 0 and DOWN and RSlope > slopemax and XRef[i] < mxidxst:
+            if RSlope >= 0 and DOWN and RSlope > slopemax and XRef[i] < firsthfidx:
             
                slopemax=RSlope
                xslopemax=XRef[i]
@@ -198,48 +253,54 @@ def GetCrossOver_percentage_extremeslope(XRef,YRef, XData,YData, mv_percent, bq,
              
             
             
-            if RSlope < 0 and UP and RSlope < slopemin and XRef[i] > mxidxed:
+            if RSlope < 0 and UP and RSlope < slopemin and XRef[i] > lasthfidx:
             
                slopemin=RSlope
                xslopemin=XRef[i]
                yslopemin=YRef[i]
              
-            
-            
- 
       #end of for loop
    
          
-      #;------ add maxslope point to down or minslope point to up
+      #;------ add maxslope and maxvalue points to down or minslope and minvalue points to up
          
       if DOWN:
-           
+         
+         #find maxslope point
          if xslopemax == 0.0: # not find maximun slope point, use middle point
-             XPts[iCount]=bpy/2.0 -1 
-             YPts[iCount]=YRef[bpy/2.0-1]
+             XPts[iCount]=bpy/2 - 1 
+             YPts[iCount]=YRef[bpy/2 - 1]
          else:
              XPts[iCount]=xslopemax
              YPts[iCount]=yslopemax
-           
-           
              SPts[iCount]=slopemax
              CPts[iCount]=1
              TPts[iCount]=2
-         
+
+         #get maxvalue point close to start
+                      
+         XPts[iCount+1]=firsthfidx 
+         YPts[iCount+1]=YRef[firsthfidx]
+         CPts[iCount+1]=1
+         TPts[iCount+1]=3
          
       if UP:
           if xslopemin == 0.0: #; not find the minimum slope point, use middle point
-             XPts[iCount]=bpy/2.0
+             XPts[iCount]=bpy/2
              YPts[iCount]=YRef[bpy/2]
           else:
              XPts[iCount]=xslopemin
-             YPts[iCount]=yslopemin
-           
-           
+             YPts[iCount]=yslopemin           
              SPts[iCount]=slopemin
              CPts[iCount]=1
              TPts[iCount]=2
-           
+
+          #get maxvalue point close to end 
+             
+          XPts[iCount+1]=lasthfidx 
+          YPts[iCount+1]=YRef[lasthfidx]
+          CPts[iCount+1]=1
+          TPts[iCount+1]=3
          
          
          

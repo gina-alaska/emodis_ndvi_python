@@ -15,7 +15,7 @@ year=$1
 
 #0. set variables, load environment variables,and craete a log file
 
-source ./1yr_emodis_250_env.bash
+source ./1yr_emodis_250_env_py.bash
 
 #make a directory
 
@@ -32,7 +32,7 @@ echo $0 started at `date -u`
 #0.5 downlpoad raw data from USGS
 
 
-./1yr_emodis_250_download_withauthoration.bash $raw_dir $year
+./1yr_emodis_250_download_withauthoration_py.bash $raw_dir $year
 
 #1. unzip raw files from $raw_dur to $unzipped_dir
 
@@ -40,11 +40,11 @@ mkdir -p $unzipped_dir
 
 echo "unzip raw data to $unzipped_dir/$year started at `date -u`"
 
-./1yr_emodis_250_unzip.bash $raw_dir $unzipped_dir $year
+./1yr_emodis_250_unzip_py.bash $raw_dir $unzipped_dir $year
 
 #2.get the flist names for ndvi and bq 
 
-./1yr_emodis_250_flist.bash $unzipped_dir $year
+./1yr_emodis_250_flist_py.bash $unzipped_dir $year
 
 flist_ndvi=$unzipped_dir/$year/${year}_flist_ndvi
 
