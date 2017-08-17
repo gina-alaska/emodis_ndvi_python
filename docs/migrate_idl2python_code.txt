@@ -1,5 +1,8 @@
 2017/7/14, jzhu, migrate NDVI algorithm from IDL code to python code.
 
+git https://github.com/gina-alaska/emodis_ndvi_python.git
+
+
 /usr/bin/python
 
 prepare raw 7-day composite data
