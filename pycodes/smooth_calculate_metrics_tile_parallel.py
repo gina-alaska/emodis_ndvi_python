@@ -33,9 +33,9 @@ def main():
    
    print( 'Argument List: ' + str(sys.argv) )
 
-   if len(sys.argv) != 3:
+   if len(sys.argv) != 4:
 
-      print( "input arguments are: filen_ndvi filen_bq")
+      print( "input arguments are: filen_ndvi filen_bq out_dir")
 
       #sys.exit(1)
 
@@ -44,6 +44,8 @@ def main():
    filen_ndvi=sys.argv[1]
 
    filen_bq=sys.argv[2]
+
+   out_dir=sys.argv[3]
 
    #make sure the program can work in both windows and linux.
 
@@ -66,7 +68,7 @@ def main():
 
    #open smooth file and metrics file to ready to be writen.
 
-   fileout_smooth=wrkdir+sign+filebasen+'_smooth_'+ver+'.tif'
+   fileout_smooth=out_dir+sign+filebasen+'_smooth_'+ver+'.tif'
 
    #openw,unit_smooth,fileout_smooth,/get_lun
 

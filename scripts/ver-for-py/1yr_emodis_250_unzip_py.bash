@@ -15,9 +15,9 @@ unzipped_dir=$2
 
 year=$3
 
-#source ./1yr_emodis_250_env_py_docker.bash
+#source ./1yr_emodis_250_env.bash
 
-org=$raw_dir
+org=$raw_dir/$year
 
 #org=/projects/UAFGINA/project_data/emodis/distribution/Alaska/historical/TERRA
 
@@ -26,12 +26,9 @@ des=$unzipped_dir/$year
 
 mkdir -p $des
 
-tmpdir=$org/$year
-
-
 cd $des
 
-find $tmpdir -type d -name "comp_???" > dlist
+find $org -type d -name "comp_???" > dlist
 
 for d in $(cat dlist); do
    echo "copy $d/*NDVI*.QKM*.zip to $des and unzip it..."

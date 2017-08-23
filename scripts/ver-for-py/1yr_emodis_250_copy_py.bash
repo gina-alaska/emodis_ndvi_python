@@ -15,7 +15,7 @@ unzipped_dir=$2
 
 year=$3
 
-#source ./1yr_emodis_250_env_py_docker.bash
+#source ./1yr_emodis_250_env.bash
 
 org=$raw_dir
 

@@ -15,35 +15,41 @@ unzipped_dir=$2
 
 year=$3
 
-#source ./1yr_emodis_250_env.bash
+#source ./1yr_emodis_250_env_py_docker.bash
 
 org=$raw_dir/$year
 
 #org=/projects/UAFGINA/project_data/emodis/distribution/Alaska/historical/TERRA
 
-
 des=$unzipped_dir/$year
 
-mkdir -p $des
+if [ ! -f $des/*.tif ]; then
 
-cd $des
+    mkdir -p $des
 
-find $org -type d -name "comp_???" > dlist
+    cd $des
 
-for d in $(cat dlist); do
-   echo "copy $d/*NDVI*.QKM*.zip to $des and unzip it..."
+    #find $org -type d -name "comp_???" > dlist
 
-  ffname=`ls $d/*NDVI*.QKM*.zip` 
+    find $org -type f -name "*.zip" >flist
+
+    for file in $(cat flist); do
+
+        echo "copy $file to $des and unzip it..."
  
-  fbname=`basename $ffname`
+        fbname=`basename $file`
 
-  cp $ffname $des
+        cp $file $des
 
-  unzip $fbname
+        unzip $fbname
 
+    done
 
-done
+fi
 
 echo "finish copying and unzipping the files!"
+
+exit 0
+
 
 

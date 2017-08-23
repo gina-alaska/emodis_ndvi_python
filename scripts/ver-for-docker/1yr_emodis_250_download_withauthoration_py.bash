@@ -15,16 +15,16 @@ dir_data=$1
 
 year=$2
 
+#check if raw data have already been downloaded"
 
-mkdir -p $dir_data/$year
+if [ ! -f ${dir_data}/${year}/*.zip ]; then
 
-cd $dir_data
+   mkdir -p ${dir_data}/${year}
 
-#wget -r -nH -o log --reject="index.html*" ftp://emodisftp.cr.usgs.gov/eMODIS/Alaska/historical/TERRA/2008/comp_42/eMTH_NDVI.*.QKM.*
+   cd ${dir_data}/$year
 
-#wget -r -nH --reject="index.html*" -A "*NDVI*QKM*.zip" $url/$year
+   wget --user jiang@gina.alaska.edu --password Gina7Zhu -r -nd -np -nH --reject="index.html*" -A "*NDVI*QKM*.zip" $url/$year .
 
-wget --user jiang@gina.alaska.edu --password Gina7Zhu -r -nH --reject="index.html*" -A "*NDVI*QKM*.zip" $url/$year
-
+fi
 
 exit 0

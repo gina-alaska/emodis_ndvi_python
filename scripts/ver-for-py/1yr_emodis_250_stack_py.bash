@@ -12,7 +12,7 @@
 
 #check if input parameters are correct
 
-source ./1yr_emodis_250_env_py_docker.bash
+source ./1yr_emodis_250_env.bash
 
 if [ $# != 6 ];then
 echo
@@ -28,19 +28,15 @@ ul_lat=$4
 lr_lon=$5
 lr_lat=$6
 
-#check if there are stacked files
+#$idl_dir/idl<<EOF
+#restore,filename='/u1/uaf/jzhu/nps/cesu/modis_ndvi_metrics/sav/codes.sav'
+#oneyear_data_layer_subset_good, '$flist_ndvi','$flist_bq','$ul_lon','$ul_lat', '$lr_lon','$lr_lat'
+#exit
+#EOF
 
-if [ ! -f $flist_ndvi ]; then
+#call python program
 
-   #call python program
-
-   python $pycodes/oneyear_data_layer_subset_good.py $flist_ndvi $flist_bq $ul_lon $ul_lat $lr_lon $lr_lat
-
-   cp $unzipped_dir/$year/${year}_stack_ndvi.tif $stacked_dir/$year
-
-   cp $unzipped_dir/$year/${year}_stack_ndvi.tif $stacked_dir/$year
-
-fi
+python $pycodes/oneyear_data_layer_subset_good.py $flist_ndvi $flist_bq $ul_lon $ul_lat $lr_lon $lr_lat
 
 exit 0  
 

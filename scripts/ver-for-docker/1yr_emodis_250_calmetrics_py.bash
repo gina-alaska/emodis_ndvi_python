@@ -4,7 +4,7 @@
 #outputs: a smooth data file, a metrics file
 
 
-if [ $# != 1 ];then
+if [ $# != 4 ];then
 
 echo "input arguments: stacked_ndvi_file, stacked_bq_file rst_dir year"
 
@@ -14,7 +14,7 @@ fi
 
 #load environment variabels
 
-source ./1yr_emodis_250_env.bash
+source ./1yr_emodis_250_env_py_docker.bash
 
 #cd $idlprg_dir
 
@@ -27,38 +27,34 @@ rst_dir=$3
 year=$4
 
 
-fd=`dirname $stacked_file`
+fd=`dirname $stacked_ndvi_file`
+
+if [ ! -f ${rst_dir}/$year/${year}*_metrics_*.tif ]; then
 
 
-mkdir -p $rst_dir/$year
+    mkdir -p ${rst_dir}/$year
 
+    #Send output to logfile
+    #LOG=$fd/calculate-metrics.log
+    #exec >>$LOG
+    #exec 2>>$LOG
 
-#Send output to logfile
-#LOG=$fd/calculate-metrics.log
-#exec >>$LOG
-#exec 2>>$LOG
+    echo "________________________"
 
-echo "________________________"
+    #send start time
 
-#send start time
+    echo calculating ndvi-metrics started at `date -u`
 
-echo calculating ndvi-metrics started at `date -u`
+    out_dir=$rst_dir/$year
 
-#$idl_dir/idl<<EOF
-#restore,filename='/u1/uaf/jzhu/nps/cesu/modis_ndvi_metrics/sav/codes.sav'
-#smooth_calculate_metrics_tile,'$stacked_file','ver16m1_3'
-#exit
-#EOF
+    python $pycodes/smooth_calculate_metrics_tile_parallel.py $stacked_ndvi_file $stacked_bq_file $out_dir
 
+    #Send end time
 
-out_dir=$rst_dir/$year
+    echo "________________________"
 
-python $pycodes/smooth_calculate_metrics_tile_parallel.py $stacked_ndvi $stacked_bq $out_dir
+    echo $0 ended at `date -u`
 
-#Send end time
+fi
 
-echo "________________________"
-
-echo $0 ended at `date -u`
-
-exit
+exit 0
