@@ -12,7 +12,7 @@
 
 #check if input parameters are correct
 
-source ./1yr_emodis_250_env_py_docker.bash
+#source ./1yr_emodis_250_env_py_docker.bash
 
 if [ $# != 6 ];then
 echo
@@ -28,17 +28,23 @@ ul_lat=$4
 lr_lon=$5
 lr_lat=$6
 
+#get the year
+
+file=`basename $flist_ndvi`
+
+year=${file:0:4}
+
 #check if there are stacked files
 
-if [ ! -f $flist_ndvi ]; then
+if [ -f $flist_ndvi ]; then
 
    #call python program
 
    python $pycodes/oneyear_data_layer_subset_good.py $flist_ndvi $flist_bq $ul_lon $ul_lat $lr_lon $lr_lat
 
-   cp $unzipped_dir/$year/${year}_stack_ndvi.tif $stacked_dir/$year
+   cp $unzipped_dir/${year}/${year}_stack_ndvi.tif $stacked_dir/$year
 
-   cp $unzipped_dir/$year/${year}_stack_ndvi.tif $stacked_dir/$year
+   cp $unzipped_dir/${year}/${year}_stack_bq.tif   $stacked_dir/$year
 
 fi
 

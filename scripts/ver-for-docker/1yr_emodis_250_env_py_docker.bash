@@ -4,6 +4,8 @@
 #raw_dir is the home directory for raw data.
 #7-day NDVI files ae stored in $year
 
+export raw_data_url=http://dds.cr.usgs.gov/emodis/Alaska/historical/TERRA
+
 export raw_dir=${HOME_DATA}
 
 export work_dir=${HOME_DATA}/work
