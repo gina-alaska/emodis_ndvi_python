@@ -9,7 +9,9 @@ exit 1
 
 fi
 
-url=http://dds.cr.usgs.gov/emodis/Alaska/historical/TERRA
+#url=http://dds.cr.usgs.gov/emodis/Alaska/historical/TERRA
+
+url=$raw_data_url
 
 dir_data=$1
 

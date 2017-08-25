@@ -14,7 +14,7 @@ fi
 
 #load environment variabels
 
-source ./1yr_emodis_250_env_py_docker.bash
+#source ./1yr_emodis_250_env_py_docker.bash
 
 #cd $idlprg_dir
 
