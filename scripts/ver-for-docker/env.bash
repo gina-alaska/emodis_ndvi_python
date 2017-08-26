@@ -1,17 +1,17 @@
 
-export raw_dir=/2016-test
+export raw_dir=/test/input
 
-export work_dir=/2016-test/work
+export work_dir=/test/scratch
 
-export unzipped_dir=/2016-test/work/unzipped
+export unzipped_dir=/unzipped
 
-export stacked_dir=/2016-test/work/stacked
+export stacked_dir=/stacked
 
-export rst_dir=/2016-test/work/rst
+export rst_dir=/test/output
 
-export script_dir=/code/emodis_ndvi_python/scripts/ver-for-docker
+export script_dir=/test/code//scripts/ver-for-docker
 
 export python=/usr/bin/python
 
-export pycodes=/code/emodis_ndvi_python/pycodes
+export pycodes=/test/code//pycodes
 

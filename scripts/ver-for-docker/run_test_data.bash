@@ -4,23 +4,22 @@
 year=2016
 
 # 0. set envs
-if [ -f env.bash ]; then
 
-   rm env.bash
+#if [ -f env.bash ]; then
+#   rm env.bash
+#fi
 
-fi
+#cat<<EOF>>env.bash
 
-cat<<EOF>>env.bash
+export raw_dir=/test/input
 
-export raw_dir=/2016-test
+export work_dir=/test/scratch
 
-export work_dir=/2016-test/work
+export unzipped_dir=${work_dir}/unzipped
 
-export unzipped_dir=/2016-test/work/unzipped
+export stacked_dir=${work_dir}/stacked
 
-export stacked_dir=/2016-test/work/stacked
-
-export rst_dir=/2016-test/work/rst
+export rst_dir=/test/output
 
 export script_dir=${HOME_EXC}/scripts/ver-for-docker
 
@@ -28,14 +27,19 @@ export python=/usr/bin/python
 
 export pycodes=${HOME_EXC}/pycodes
 
-EOF
+#EOF
 
-source ./env.bash
+#source ./env.bash
 
 #clean directories
 
-rm -r $work_dir
+if [ `ls ${work_dir} | wc -l` != "0" ]; then
 
+  echo "cleaning scratch/work_dir: $work_dir"
+
+  rm -r ${work_dir}/*
+
+fi
 
 cd $script_dir
 
@@ -82,6 +86,12 @@ echo $0 started at `date -u`
 #./1yr_emodis_250_unzip_py.bash ${raw_dir} ${unzipped_dir} ${year}
 
 #2. get the flist names for ndvi and bq 
+
+#*.tif data should be stored in ${unzipped_dir}/${year}
+
+mkdir ${unzipped_dir}/${year}
+
+cp ${raw_dir}/*.tif /${unzipped_dir}/${year}
 
 ${script_dir}/1yr_emodis_250_flist_py.bash ${unzipped_dir} ${year}
 
